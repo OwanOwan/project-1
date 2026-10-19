@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="VitalFlow - An intuitive daily routine and healthy living companion. Cultivate healthy habits, track hydration, movement, mindfulness, and master your daily rhythm." />
+  <title>VitalFlow • Daily Routine & Healthy Living Tracker</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Ambient Atmospheric Glows -->
+  <div class="ambient-glow glow-top" aria-hidden="true"></div>
+  <div class="ambient-glow glow-bottom" aria-hidden="true"></div>
+  <div class="ambient-glow glow-accent" aria-hidden="true"></div>
+
+  <!-- Confetti Canvas for Celebrations -->
+  <canvas id="confettiCanvas" class="confetti-canvas" aria-hidden="true"></canvas>
+
+  <div class="app-layout">
+    <!-- Top Global Header -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="brand-logo">
+          <svg class="brand-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+          <div class="pulse-ring"></div>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-title">VitalFlow</h1>
+          <p class="brand-tagline">Daily Routine &amp; Healthy Living</p>
+        </div>
+      </div>
+
+      <!-- Center Live Date & Status -->
+      <div class="header-center">
+        <div class="live-date-pill" id="liveDatePill">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span id="currentDayText" class="day-name">Today</span>
+          <span class="divider" aria-hidden="true">•</span>
+          <span id="currentDateText" class="full-date">Loading date...</span>
+          <span class="divider" aria-hidden="true">•</span>
+          <span id="liveClockText" class="live-clock">00:00</span>
+        </div>
+      </div>
+
+      <!-- Header Action Controls -->
+      <div class="header-actions">
+        <!-- Breathwork Quick Launcher -->
+        <button id="openBreathworkBtn" class="pill-btn breath-pill" title="Open Breathing Exercise & Focus Timer" aria-label="Open Breathing Exercise">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M12 7v5l3 3"/>
+          </svg>
+          <span class="btn-label">Breathe &amp; Focus</span>
+        </button>
+
+        <!-- Sound Chime Toggle -->
+        <button id="soundToggleBtn" class="icon-btn" title="Toggle audio chime feedback" aria-label="Toggle sound feedback">
+          <svg class="sound-on-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+          </svg>
+          <svg class="sound-off-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <line x1="23" y1="9" x2="17" y2="15"/>
+            <line x1="17" y1="9" x2="23" y2="15"/>
+          </svg>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button id="themeToggleBtn" class="icon-btn" title="Toggle Light / Dark mode" aria-label="Toggle Theme">
+          <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+
+        <!-- Quick Day Options Menu -->
+        <div class="dropdown-wrap">
+          <button id="dayMenuBtn" class="icon-btn" title="Routine options & backup" aria-label="Options Menu" aria-haspopup="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="1.5"/>
+              <circle cx="12" cy="5" r="1.5"/>
+              <circle cx="12" cy="19" r="1.5"/>
+            </svg>
+          </button>
+          <div id="dayMenuDropdown" class="dropdown-menu" style="display: none;">
+            <button type="button" class="dropdown-item" id="resetDayBtn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 2v6h6M21 12A9 9 0 0 0 6 5.3L3 8"/>
+                <path d="M21 22v-6h-6M3 12a9 9 0 0 0 15 6.7l3-2.7"/>
+              </svg>
+              <span>Reset Today's Checks</span>
+            </button>
+            <button type="button" class="dropdown-item" id="loadHealthyPresetsBtn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              <span>Restore Healthy Routine Presets</span>
+            </button>
+            <div class="dropdown-divider"></div>
+            <button type="button" class="dropdown-item" id="exportDataBtn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              <span>Export Routine Data</span>
+            </button>
+            <button type="button" class="dropdown-item" id="importDataBtn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              <span>Import Routine Data</span>
+            </button>
+            <input type="file" id="importFileInput" accept=".json" style="display: none;" />
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- HERO SECTION: Vitality Score, Streaks & Daily Health Biohack -->
+      <section class="hero-grid" aria-label="Daily Vitality and Wellness Overview">
+        <!-- 1. Daily Wellness Score Card -->
+        <div class="card score-card">
+          <div class="score-card-header">
+            <span class="card-eyebrow">Today's Vitality Score</span>
+            <span class="score-status-badge" id="scoreStatusBadge">🌱 Fresh Start</span>
+          </div>
+
+          <div class="score-body">
+            <div class="radial-score-wrap">
+              <svg class="radial-score-svg" viewBox="0 0 120 120" width="130" height="130">
+                <circle class="score-track" cx="60" cy="60" r="50" />
+                <circle class="score-progress" id="scoreProgressCircle" cx="60" cy="60" r="50" />
+              </svg>
+              <div class="score-center-info">
+                <span class="score-val" id="wellnessScoreVal">0%</span>
+                <span class="score-lbl">Wellness</span>
+              </div>
+            </div>
+
+            <div class="score-breakdown">
+              <div class="metric-mini-bar">
+                <div class="mini-bar-header">
+                  <span class="mini-bar-title">Routines Done</span>
+                  <span class="mini-bar-val" id="miniRoutineVal">0 / 0</span>
+                </div>
+                <div class="mini-track">
+                  <div class="mini-fill fill-emerald" id="miniRoutineFill" style="width: 0%"></div>
+                </div>
+              </div>
+
+              <div class="metric-mini-bar">
+                <div class="mini-bar-header">
+                  <span class="mini-bar-title">Hydration Target</span>
+                  <span class="mini-bar-val" id="miniHydrationVal">0%</span>
+                </div>
+                <div class="mini-track">
+                  <div class="mini-fill fill-cyan" id="miniHydrationFill" style="width: 0%"></div>
+                </div>
+              </div>
+
+              <div class="metric-mini-bar">
+                <div class="mini-bar-header">
+                  <span class="mini-bar-title">Active Movement</span>
+                  <span class="mini-bar-val" id="miniMovementVal">0%</span>
+                </div>
+                <div class="mini-track">
+                  <div class="mini-fill fill-amber" id="miniMovementFill" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="score-footer">
+            <span class="score-footer-text" id="scoreFooterMessage">Complete your morning routine to supercharge vitality!</span>
+          </div>
+        </div>
+
+        <!-- 2. Streak & Habit Consistency Card -->
+        <div class="card streak-card">
+          <div class="streak-header">
+            <div class="streak-icon-wrap">
+              <span class="fire-emoji" aria-hidden="true">🔥</span>
+            </div>
+            <div class="streak-details">
+              <div class="streak-count-row">
+                <span class="streak-number" id="streakDaysCount">1</span>
+                <span class="streak-unit">Day Streak</span>
+              </div>
+              <p class="streak-subtitle" id="streakSubtitle">Every healthy choice compounds</p>
+            </div>
+          </div>
+
+          <!-- 7-Day Visual Tracker -->
+          <div class="weekly-streak-strip" id="weeklyStreakStrip" aria-label="Past 7 days completion history">
+            <!-- Rendered by JS -->
+          </div>
+
+          <div class="streak-milestone-box">
+            <div class="milestone-icon">🏆</div>
+            <div class="milestone-info">
+              <span class="milestone-title">Next Milestone</span>
+              <span class="milestone-desc" id="milestoneDesc">Complete all routines for a 3-day glow streak!</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Health Insight / Biohack Card -->
+        <div class="card biohack-card">
+          <div class="biohack-header">
+            <div class="biohack-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+              </svg>
+              <span>Daily Health Biohack</span>
+            </div>
+            <button id="refreshTipBtn" class="icon-btn-sm" title="Discover another health insight" aria-label="Next tip">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="biohack-content">
+            <h3 class="biohack-title" id="biohackTitle">Morning Sunlight &amp; Circadian Rhythm</h3>
+            <p class="biohack-body" id="biohackBody">
+              Viewing 10–15 minutes of natural sunlight within 1 hour of waking triggers a healthy morning cortisol pulse and sets an internal clock for restorative melatonin release 14–16 hours later.
+            </p>
+          </div>
+
+          <div class="biohack-tag-row">
+            <span class="biohack-tag" id="biohackTag">⚡ Circadian Biology</span>
+            <button type="button" class="apply-biohack-btn" id="applyBiohackBtn" title="Add this as a daily routine">
+              + Add to Routine
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- HEALTH VITALS DOCK: Hydration, Active Movement, Rest & Mood -->
+      <section class="vitals-dock" aria-label="Healthy Living Vitals Tracker">
+        <!-- 1. Hydration Station -->
+        <div class="card vital-card hydration-card">
+          <div class="vital-card-header">
+            <div class="vital-icon-badge water-badge">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+              </svg>
+            </div>
+            <div class="vital-title-group">
+              <h3 class="vital-name">Hydration Station</h3>
+              <span class="vital-target" id="waterTargetLabel">Goal: 2,500 ml</span>
+            </div>
+            <span class="vital-pct" id="waterPercentage">0%</span>
+          </div>
+
+          <div class="hydration-visual-row">
+            <div class="water-glass-meter">
+              <div class="water-fill" id="waterGlassFill" style="height: 0%">
+                <div class="water-wave"></div>
+              </div>
+            </div>
+            <div class="water-metrics">
+              <div class="water-current-val">
+                <span id="currentWaterMl">0</span>
+                <span class="water-unit">ml</span>
+              </div>
+              <p class="water-subtext" id="waterSubtext">Drink water early to ignite metabolism</p>
+            </div>
+          </div>
+
+          <div class="water-quick-actions">
+            <button type="button" class="water-add-btn" data-amount="250" id="addWater250Btn">
+              +250 ml
+              <span class="btn-sub">Glass</span>
+            </button>
+            <button type="button" class="water-add-btn" data-amount="500" id="addWater500Btn">
+              +500 ml
+              <span class="btn-sub">Bottle</span>
+            </button>
+            <button type="button" class="water-sub-btn" id="subWaterBtn" title="Undo last glass">
+              -250 ml
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. Movement & Active Minutes -->
+        <div class="card vital-card movement-card">
+          <div class="vital-card-header">
+            <div class="vital-icon-badge move-badge">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M13 4v6l4 2"/>
+                <circle cx="12" cy="12" r="10"/>
+              </svg>
+            </div>
+            <div class="vital-title-group">
+              <h3 class="vital-name">Active Movement</h3>
+              <span class="vital-target" id="moveTargetLabel">Goal: 8,000 steps / 30m</span>
+            </div>
+            <span class="vital-pct" id="movementPercentage">0%</span>
+          </div>
+
+          <div class="movement-visual-row">
+            <div class="movement-stats-box">
+              <div class="move-stat">
+                <span class="move-val" id="currentStepsCount">0</span>
+                <span class="move-lbl">Steps Taken</span>
+              </div>
+              <div class="move-divider"></div>
+              <div class="move-stat">
+                <span class="move-val" id="activeMinsCount">0</span>
+                <span class="move-lbl">Active Mins</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill fill-amber" id="movementProgressBar" style="width: 0%"></div>
+          </div>
+
+          <div class="move-quick-actions">
+            <button type="button" class="move-add-btn" id="addSteps1000Btn">+1,000 Steps</button>
+            <button type="button" class="move-add-btn" id="addWalk15Btn">+15m Walk</button>
+            <button type="button" class="move-add-btn" id="addWorkout30Btn">+30m Workout</button>
+          </div>
+        </div>
+
+        <!-- 3. Mind, Sleep & Mood Check-in -->
+        <div class="card vital-card wellness-state-card">
+          <div class="vital-card-header">
+            <div class="vital-icon-badge mood-badge">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                <line x1="9" y1="9" x2="9.01" y2="9"/>
+                <line x1="15" y1="9" x2="15.01" y2="9"/>
+              </svg>
+            </div>
+            <div class="vital-title-group">
+              <h3 class="vital-name">Mind &amp; Recovery</h3>
+              <span class="vital-target" id="sleepSummaryText">Sleep: Logged 7.5 hrs</span>
+            </div>
+            <button type="button" id="logSleepBtn" class="pill-btn-sm" title="Log or update last night's sleep">
+              Edit Sleep
+            </button>
+          </div>
+
+          <!-- Energy & Mood Pills -->
+          <div class="mood-checkin-wrap">
+            <span class="mood-prompt">Current Energy &amp; Mood:</span>
+            <div class="mood-buttons-grid" id="moodButtonsGrid">
+              <button type="button" class="mood-btn" data-mood="radiant" title="Radiant & High Energy">
+                <span class="mood-emoji">⚡</span>
+                <span class="mood-label">Radiant</span>
+              </button>
+              <button type="button" class="mood-btn" data-mood="calm" title="Calm & Centered">
+                <span class="mood-emoji">🧘</span>
+                <span class="mood-label">Calm</span>
+              </button>
+              <button type="button" class="mood-btn" data-mood="focused" title="Focused & Productive">
+                <span class="mood-emoji">🎯</span>
+                <span class="mood-label">Focused</span>
+              </button>
+              <button type="button" class="mood-btn" data-mood="tired" title="Tired or Sluggish">
+                <span class="mood-emoji">🥱</span>
+                <span class="mood-label">Tired</span>
+              </button>
+              <button type="button" class="mood-btn" data-mood="stressed" title="Stressed or Overwhelmed">
+                <span class="mood-emoji">🌪️</span>
+                <span class="mood-label">Stressed</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="mindfulness-quick-banner" id="mindfulnessQuickBanner">
+            <span class="banner-icon">🌿</span>
+            <div class="banner-text">
+              <span class="banner-title">Need a mental reset?</span>
+              <span class="banner-sub">Take a 2-minute conscious breath</span>
+            </div>
+            <button type="button" class="banner-action-btn" id="startQuickBreathBtn">Start</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ROUTINE TRACKER SECTION -->
+      <section class="routines-section" aria-label="Daily Routine Planner and Tracker">
+        <div class="section-title-bar">
+          <div class="title-left">
+            <h2 class="section-title">Today's Routine Timeline</h2>
+            <div class="section-badge-wrap">
+              <span class="routine-count-badge" id="routineCompletionBadge">0 / 0 Completed</span>
+            </div>
+          </div>
+
+          <div class="title-actions">
+            <button type="button" class="btn btn-preset" id="openPresetsDrawerBtn" title="Explore healthy habit presets">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              <span>+ Healthy Presets</span>
+            </button>
+
+            <button type="button" class="btn btn-primary" id="openAddRoutineModalBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              <span>Add Custom Routine</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Healthy Habit Suggestions Strip (Expandable) -->
+        <div class="healthy-presets-strip" id="healthyPresetsStrip" style="display: none;">
+          <div class="presets-header">
+            <span class="presets-title">✨ Recommended Healthy Living Rituals (Tap to add):</span>
+            <button type="button" class="close-presets-btn" id="closePresetsStripBtn" aria-label="Close presets">✕</button>
+          </div>
+          <div class="preset-chips-scroll" id="presetChipsContainer">
+            <!-- Preset items rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Time-of-Day Phase Filter Tabs -->
+        <div class="phase-filters-bar" role="tablist" aria-label="Filter routine by time of day">
+          <button type="button" class="phase-tab active" data-phase="all" role="tab" aria-selected="true" id="tabPhaseAll">
+            <span class="tab-icon">✨</span>
+            <span class="tab-text">All Day</span>
+            <span class="tab-count" id="countPhaseAll">0</span>
+          </button>
+          <button type="button" class="phase-tab" data-phase="morning" role="tab" aria-selected="false" id="tabPhaseMorning">
+            <span class="tab-icon">🌅</span>
+            <span class="tab-text">Morning</span>
+            <span class="tab-count" id="countPhaseMorning">0</span>
+          </button>
+          <button type="button" class="phase-tab" data-phase="midday" role="tab" aria-selected="false" id="tabPhaseMidday">
+            <span class="tab-icon">☀️</span>
+            <span class="tab-text">Midday</span>
+            <span class="tab-count" id="countPhaseMidday">0</span>
+          </button>
+          <button type="button" class="phase-tab" data-phase="evening" role="tab" aria-selected="false" id="tabPhaseEvening">
+            <span class="tab-icon">🌇</span>
+            <span class="tab-text">Evening</span>
+            <span class="tab-count" id="countPhaseEvening">0</span>
+          </button>
+          <button type="button" class="phase-tab" data-phase="night" role="tab" aria-selected="false" id="tabPhaseNight">
+            <span class="tab-icon">🌙</span>
+            <span class="tab-text">Night Recovery</span>
+            <span class="tab-count" id="countPhaseNight">0</span>
+          </button>
+        </div>
+
+        <!-- Sub-Toolbar: Category Filter Chips, Search & Sort -->
+        <div class="routine-toolbar">
+          <div class="category-chips-scroll" id="categoryChipsBar" aria-label="Filter by health category">
+            <button type="button" class="category-chip active" data-category="all">All Pillars</button>
+            <button type="button" class="category-chip" data-category="movement">🏃 Movement</button>
+            <button type="button" class="category-chip" data-category="hydration">💧 Hydration</button>
+            <button type="button" class="category-chip" data-category="nutrition">🥗 Nutrition</button>
+            <button type="button" class="category-chip" data-category="mindfulness">🧘 Mindfulness</button>
+            <button type="button" class="category-chip" data-category="sleep">💤 Sleep &amp; Rest</button>
+            <button type="button" class="category-chip" data-category="habits">🎯 Healthy Habits</button>
+          </div>
+
+          <div class="search-sort-group">
+            <div class="search-input-wrap">
+              <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input
+                type="search"
+                id="routineSearchInput"
+                class="search-input"
+                placeholder="Search your routines..."
+                aria-label="Search routines"
+              />
+            </div>
+
+            <div class="sort-select-wrap">
+              <select id="routineSortSelect" class="sort-select" aria-label="Sort routines">
+                <option value="time">⏰ Scheduled Time</option>
+                <option value="priority">🔥 High Priority</option>
+                <option value="name">🔤 Alphabetical</option>
+                <option value="category">🏷️ Category</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Routine List Container -->
+        <div class="routines-container">
+          <ul id="routineList" class="routine-list" aria-live="polite">
+            <!-- Rendered dynamically by app.js -->
+          </ul>
+
+          <!-- Empty State View -->
+          <div id="emptyRoutineState" class="empty-state" style="display: none;">
+            <div class="empty-icon-bubble">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <path d="M12 8v4"/>
+                <path d="M12 16h.01"/>
+              </svg>
+            </div>
+            <h3 class="empty-title" id="emptyTitle">No routines found in this filter</h3>
+            <p class="empty-desc" id="emptyDesc">Start building your optimal day. Add a custom routine or tap healthy presets above!</p>
+            <button type="button" class="btn btn-outline" id="emptyActionBtn">+ Add A Healthy Routine</button>
+          </div>
+        </div>
+
+        <!-- Routine List Summary Footer -->
+        <div class="routine-footer-bar">
+          <div class="footer-left-info">
+            <span id="footerRoutinesRemaining">0 routines left for today</span>
+          </div>
+          <div class="footer-right-actions">
+            <button type="button" class="text-link-btn" id="markAllVisibleCompleteBtn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              <span>Complete All Visible</span>
+            </button>
+            <button type="button" class="text-link-btn danger-hover" id="uncheckAllBtn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 12h18"/>
+              </svg>
+              <span>Uncheck All</span>
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Global App Footer -->
+    <footer class="global-footer">
+      <p>VitalFlow • Prioritizing Mind, Body &amp; Daily Rhythm • Designed for Peak Vitality</p>
+    </footer>
+  </div>
+
+  <!-- MODALS -->
+
+  <!-- 1. Add / Edit Routine Modal -->
+  <div id="routineModal" class="modal-backdrop" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="routineModalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon-badge" id="modalIconBadge">🌿</span>
+          <h3 id="routineModalTitle" class="modal-title">Add Healthy Routine</h3>
+        </div>
+        <button type="button" id="closeRoutineModalBtn" class="icon-btn-sm" aria-label="Close modal">✕</button>
+      </div>
+
+      <form id="routineForm" class="modal-form">
+        <input type="hidden" id="routineFormId" />
+
+        <div class="form-group">
+          <label for="routineTitleInput" class="form-label">Routine Habit / Action <span class="required">*</span></label>
+          <input
+            type="text"
+            id="routineTitleInput"
+            class="form-input"
+            placeholder="e.g. 15-minute Morning Sunlight & Breathwork"
+            required
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="routinePhaseSelect" class="form-label">Time of Day Phase</label>
+            <select id="routinePhaseSelect" class="form-select">
+              <option value="morning">🌅 Morning Radiance</option>
+              <option value="midday">☀️ Midday Energizer</option>
+              <option value="evening">🌇 Evening Wind-down</option>
+              <option value="night">🌙 Night Recovery</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="routineTimeInput" class="form-label">Target Time</label>
+            <input type="time" id="routineTimeInput" class="form-input" value="08:00" />
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="routineCategorySelect" class="form-label">Health Living Pillar</label>
+            <select id="routineCategorySelect" class="form-select">
+              <option value="movement">🏃 Movement &amp; Fitness</option>
+              <option value="hydration">💧 Hydration</option>
+              <option value="nutrition">🥗 Nutrition &amp; Fuel</option>
+              <option value="mindfulness">🧘 Mindfulness &amp; Breath</option>
+              <option value="sleep">💤 Sleep &amp; Rest</option>
+              <option value="habits">🎯 Healthy Habit</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="routineDurationInput" class="form-label">Duration (Minutes)</label>
+            <input type="number" id="routineDurationInput" class="form-input" min="1" max="180" value="15" placeholder="mins" />
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="routinePrioritySelect" class="form-label">Health Priority Impact</label>
+            <select id="routinePrioritySelect" class="form-select">
+              <option value="vital">🔥 Vital (Core Habit)</option>
+              <option value="high" selected>⭐ High Impact</option>
+              <option value="moderate">🌱 Moderate</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="routineIconInput" class="form-label">Icon / Emoji</label>
+            <select id="routineIconInput" class="form-select">
+              <option value="☀️">☀️ Sun / Wake</option>
+              <option value="💧">💧 Water / Hydrate</option>
+              <option value="🏃">🏃 Movement / Run</option>
+              <option value="🧘">🧘 Meditate / Yoga</option>
+              <option value="🥗">🥗 Healthy Food</option>
+              <option value="💊">💊 Vitamins / Greens</option>
+              <option value="🚶">🚶 Walk / Stroll</option>
+              <option value="📖">📖 Reading</option>
+              <option value="🍵">🍵 Herbal Tea</option>
+              <option value="📵">📵 Digital Detox</option>
+              <option value="💤">💤 Sleep / Wind down</option>
+              <option value="🌿">🌿 Nature / Reset</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="routineNotesInput" class="form-label">Health Benefit / Tip (Optional)</label>
+          <input
+            type="text"
+            id="routineNotesInput"
+            class="form-input"
+            placeholder="e.g. Boosts dopamine, sets circadian clock, lowers inflammation"
+          />
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" id="cancelRoutineModalBtn" class="btn btn-secondary">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveRoutineSubmitBtn">Save Routine</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. Breathwork & Zen Focus Timer Modal -->
+  <div id="breathworkModal" class="modal-backdrop" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="breathworkModalTitle">
+    <div class="modal-card modal-zen">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon-badge">🧘</span>
+          <h3 id="breathworkModalTitle" class="modal-title">Conscious Breathwork &amp; Zen Timer</h3>
+        </div>
+        <button type="button" id="closeBreathworkModalBtn" class="icon-btn-sm" aria-label="Close breathwork">✕</button>
+      </div>
+
+      <div class="zen-tabs">
+        <button type="button" class="zen-tab active" id="tabModeBreathing">4-7-8 Deep Relaxation</button>
+        <button type="button" class="zen-tab" id="tabModeBox">Box Breathing (Focus)</button>
+        <button type="button" class="zen-tab" id="tabModeTimer">Routine Timer</button>
+      </div>
+
+      <!-- Breathing Guide View -->
+      <div id="breathingGuideView" class="zen-view-body">
+        <div class="breathing-orb-container">
+          <div class="breathing-pulse-aura" id="breathAura"></div>
+          <div class="breathing-orb" id="breathOrb">
+            <span class="breath-instruction" id="breathInstruction">Ready</span>
+            <span class="breath-seconds" id="breathSeconds"></span>
+          </div>
+        </div>
+
+        <p class="breath-guidance" id="breathGuidance">
+          Inhale calmly through your nose for 4s, hold for 7s, exhale completely through mouth for 8s.
+        </p>
+
+        <div class="breath-cycle-indicator">
+          <span class="cycle-text">Completed Cycles: <strong id="breathCycleCount">0</strong> / 4</span>
+        </div>
+
+        <div class="zen-controls">
+          <button type="button" class="btn btn-primary" id="startBreathingBtn">Begin Exercise</button>
+          <button type="button" class="btn btn-secondary" id="stopBreathingBtn" style="display: none;">Stop</button>
+        </div>
+      </div>
+
+      <!-- Custom Routine Timer View -->
+      <div id="timerView" class="zen-view-body" style="display: none;">
+        <div class="timer-display-wrap">
+          <span class="timer-digits" id="timerDigits">15:00</span>
+          <span class="timer-label" id="timerTaskName">Healthy Routine Focus</span>
+        </div>
+
+        <div class="timer-presets-row">
+          <button type="button" class="timer-chip" data-mins="5">5 Mins</button>
+          <button type="button" class="timer-chip active" data-mins="15">15 Mins</button>
+          <button type="button" class="timer-chip" data-mins="25">25 Mins</button>
+          <button type="button" class="timer-chip" data-mins="45">45 Mins</button>
+        </div>
+
+        <div class="zen-controls">
+          <button type="button" class="btn btn-primary" id="startTimerBtn">Start Timer</button>
+          <button type="button" class="btn btn-secondary" id="resetTimerBtn">Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Sleep Log Modal -->
+  <div id="sleepModal" class="modal-backdrop" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="sleepModalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon-badge">💤</span>
+          <h3 id="sleepModalTitle" class="modal-title">Log Last Night's Sleep</h3>
+        </div>
+        <button type="button" id="closeSleepModalBtn" class="icon-btn-sm" aria-label="Close sleep modal">✕</button>
+      </div>
+
+      <form id="sleepForm" class="modal-form">
+        <div class="form-group">
+          <label for="sleepHoursInput" class="form-label">Total Rest Duration (Hours)</label>
+          <input type="number" id="sleepHoursInput" class="form-input" min="3" max="14" step="0.5" value="7.5" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Sleep Quality Rating</label>
+          <div class="sleep-quality-grid" id="sleepQualityGrid">
+            <button type="button" class="quality-btn active" data-quality="Restful">
+              <span class="q-emoji">✨</span>
+              <span class="q-lbl">Restful (Great)</span>
+            </button>
+            <button type="button" class="quality-btn" data-quality="Good">
+              <span class="q-emoji">😊</span>
+              <span class="q-lbl">Good</span>
+            </button>
+            <button type="button" class="quality-btn" data-quality="Interrupted">
+              <span class="q-emoji">🥱</span>
+              <span class="q-lbl">Interrupted</span>
+            </button>
+            <button type="button" class="quality-btn" data-quality="Restless">
+              <span class="q-emoji">🌪️</span>
+              <span class="q-lbl">Restless</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" id="cancelSleepModalBtn" class="btn btn-secondary">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Sleep Log</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notifications Container -->
+  <div id="toastContainer" class="toast-container" aria-live="assertive"></div>
+
+  <!-- Application Script -->
+  <script src="app.js"></script>
+</body>
+</html>
